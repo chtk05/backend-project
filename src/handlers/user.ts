@@ -1,10 +1,11 @@
 import { RequestHandler, json } from "express";
 import { IUserHandler } from ".";
-import { IUser, IUserRepository, UserCreationError } from "../repositories";
+import { IUser, IUserRepository } from "../repositories";
 import { ICreateUserDto, IUserDto } from "../dto/user.dto";
 import { IErrorDto } from "../dto/error.dto";
 import { hash } from "bcryptjs";
 import { hashPassword } from "../utils/bcrypt";
+import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 
 export default class UserHandler implements IUserHandler {
   //   constructor(private repo: IUserRepository);
@@ -48,10 +49,12 @@ export default class UserHandler implements IUserHandler {
         })
         .end();
     } catch (error) {
-      if (error instanceof UserCreationError) {
-        const columnName = `${error}`.replace("Unique", "");
+      if (
+        error instanceof PrismaClientKnownRequestError &&
+        error.code === "P2002"
+      ) {
         return res.status(500).json({
-          message: `${error.column} is invalid`,
+          message: `name is invalid`,
         });
       }
       return res.status(500).json({
