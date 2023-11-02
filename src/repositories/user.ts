@@ -20,7 +20,9 @@ export default class UserReposiroty implements IUserRepository {
     });
     return createuser;
   }
+  //can use finduniqueorThrow
   public async findByUsername(username: string): Promise<User> {
+    // const loginSuccess = await this.prisma.user.findUniqueOrThrow
     const loginSuccess = await this.prisma.user.findUnique({
       where: {
         username: username,
@@ -29,5 +31,17 @@ export default class UserReposiroty implements IUserRepository {
     if (loginSuccess === null)
       throw new Error(`Username : ${username} not found`);
     return loginSuccess;
+  }
+  public async findById(id: string): Promise<IUser> {
+    const userResult = await this.prisma.user.findUniqueOrThrow({
+      select: {
+        id: true,
+        name: true,
+        username: true,
+        registeredAt: true,
+      },
+      where: { id },
+    });
+    return userResult;
   }
 }
