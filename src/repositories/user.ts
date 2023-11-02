@@ -8,25 +8,17 @@ export default class UserReposiroty implements IUserRepository {
 
   public async create(user: ICreateUserDto): Promise<IUser> {
     //return await this.prisma.create
-    try {
-      const createuser = await this.prisma.user.create({
-        data: user,
-        select: {
-          id: true,
-          name: true,
-          username: true,
-          registeredAt: true,
-        },
-      });
-      return createuser;
-    } catch (error) {
-      if (
-        error instanceof PrismaClientKnownRequestError &&
-        error.code === "P2002"
-      )
-        throw new Error(`Unique username`);
-      throw new Error(`${error}`);
-    }
+
+    const createuser = await this.prisma.user.create({
+      data: user,
+      select: {
+        id: true,
+        name: true,
+        username: true,
+        registeredAt: true,
+      },
+    });
+    return createuser;
   }
   public async findByUsername(username: string): Promise<User> {
     const loginSuccess = await this.prisma.user.findUnique({
