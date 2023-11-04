@@ -30,5 +30,6 @@ export interface IUserRepository {
 
 export interface IContentRepository {
   createContent(id: string, content: ICreateContent): Promise<IContent>;
-  // findById(id: string): Promise<IContent>;
+  getContent(): Promise<IContent[]>;
+  getById(id: number): Promise<IContent>;
 }

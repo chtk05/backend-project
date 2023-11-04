@@ -27,7 +27,27 @@ export default class ContentRepository implements IContentRepository {
       },
     });
   }
-  //   public async findById(id: string): Promise<IContent> {
-  //     return;
-  //   }
+  public async getContent(): Promise<IContent[]> {
+    return await this.prisma.content.findMany({
+      include: {
+        User: {},
+      },
+    });
+  }
+  public async getById(id: number): Promise<IContent> {
+    const infoById = await this.prisma.content.findUniqueOrThrow({
+      include: {
+        User: {
+          select: {
+            id: true,
+            username: true,
+            registeredAt: true,
+            name: true,
+          },
+        },
+      },
+      where: { id },
+    });
+    return infoById;
+  }
 }
