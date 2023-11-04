@@ -4,6 +4,7 @@ import { IErrorDto } from "../dto/error.dto";
 import { ICredentialDto, ILoginDto } from "../dto/auth.dto";
 import { AuthStatus } from "../middleware/jwt";
 import { IContentDto, ICreateContentDto } from "../dto/content.dto";
+import { IContent } from "../repositories";
 
 export interface IUserHandler {
   registration: RequestHandler<{}, IUserDto | IErrorDto, ICreateUserDto>;
@@ -16,14 +17,11 @@ export interface IUserHandler {
     AuthStatus
   >;
 }
-
+export interface Id {
+  id: number;
+}
 export interface IContentHandler {
-  // selfcheck: RequestHandler<
-  //   {},
-  //   ICreateContentDto | IErrorDto,
-  //   unknown,
-  //   unknown,
-  //   AuthStatus
-  // >;
   create: RequestHandler<{}, IContentDto | IErrorDto, ICreateContentDto>;
+  getAll: RequestHandler<{}, IContent[] | IErrorDto>;
+  getContentById: RequestHandler<Id, IContent | IErrorDto>;
 }

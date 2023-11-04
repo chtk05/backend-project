@@ -33,6 +33,8 @@ authRouter.get("/me", jwtMiddleware.auth, userHandler.selfcheck);
 const contentRouter = express.Router();
 app.use("/content", contentRouter);
 contentRouter.post("/", jwtMiddleware.auth, contentHandler.create);
+contentRouter.get("/", contentHandler.getAll);
+contentRouter.get("/:id", contentHandler.getContentById);
 
 app.listen(process.env.PORT, () => {
   console.log(`Learnhub API is listening on port ${process.env.PORT}`);

@@ -1,28 +1,14 @@
 import { RequestHandler } from "express";
-import { IContentHandler } from ".";
+import { IContentHandler, Id } from ".";
 import { IContentDto, ICreateContentDto } from "../dto/content.dto";
 import { IErrorDto } from "../dto/error.dto";
 import { AuthStatus } from "../middleware/jwt";
-import { IContentRepository } from "../repositories";
+import { IContent, IContentRepository } from "../repositories";
 import { embedUrl } from "../utils/ombed";
 
 export default class ContentHandler implements IContentHandler {
   constructor(private repo: IContentRepository) {}
-  //   public selfcheck: RequestHandler<
-  //     {},
-  //     ICreateContentDto | IErrorDto,
-  //     unknown,
-  //     unknown,
-  //     AuthStatus
-  //   > = async (req, res) => {
-  //     try {
-  //       const result = await this.repo.findById(res.locals.user.id);
-  //       return res.status(200).json(result).end();
-  //     } catch (error) {
-  //       console.error(error);
-  //       return res.status(500).send({ message: "Internal server error" });
-  //     }
-  //   };
+
   public create: RequestHandler<
     {},
     IContentDto | IErrorDto,
@@ -52,5 +38,25 @@ export default class ContentHandler implements IContentHandler {
       .status(200)
       .json({ ...returnedContent })
       .end();
+  };
+  public getAll: RequestHandler<{}, IContent[] | IErrorDto> = async (
+    req,
+    res
+  ) => {
+    const contentInfo = await this.repo.getContent();
+    return res.status(200).json(contentInfo).end();
+  };
+  public getContentById: RequestHandler<Id, IContent | IErrorDto> = async (
+    req,
+    res
+  ) => {
+    try {
+      const idInfo = await this.repo.getById(Number(req.params.id));
+      if (idInfo === null)
+        return res.status(404).json({ message: "Content not found" }).end();
+      return res.status(200).json(idInfo).end();
+    } catch (err) {
+      return res.status(500).json({ message: "Internal server error" }).end();
+    }
   };
 }
