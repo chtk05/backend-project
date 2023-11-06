@@ -15,3 +15,8 @@ export interface IContentDto extends ICreateContentDto {
   createdAt: Date;
   updatedAt: Date;
 }
+
+export interface UpdateContentDto {
+  comment: string;
+  rating: number;
+}

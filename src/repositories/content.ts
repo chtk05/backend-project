@@ -1,6 +1,10 @@
 import { Content, PrismaClient } from "@prisma/client";
 import { IContent, IContentRepository } from ".";
-import { IContentDto, ICreateContentDto } from "../dto/content.dto";
+import {
+  IContentDto,
+  ICreateContentDto,
+  UpdateContentDto,
+} from "../dto/content.dto";
 
 export default class ContentRepository implements IContentRepository {
   constructor(private prisma: PrismaClient) {}
@@ -34,7 +38,7 @@ export default class ContentRepository implements IContentRepository {
       },
     });
   }
-  public async getById(id: number): Promise<IContent> {
+  public async getContentId(id: number): Promise<IContent> {
     const infoById = await this.prisma.content.findUniqueOrThrow({
       include: {
         User: {
@@ -49,5 +53,24 @@ export default class ContentRepository implements IContentRepository {
       where: { id },
     });
     return infoById;
+  }
+  public async partialUpdate(
+    id: number,
+    content: UpdateContentDto
+  ): Promise<Content> {
+    const updateInfoId = await this.prisma.content.update({
+      data: content,
+      where: { id },
+    });
+    return updateInfoId;
+  }
+  public async deleteContent(id: number): Promise<IContent> {
+    const deletedInfo = await this.prisma.content.delete({
+      where: { id },
+      include: {
+        User: true,
+      },
+    });
+    return deletedInfo;
   }
 }
