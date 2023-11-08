@@ -85,12 +85,18 @@ export default class ContentHandler implements IContentHandler {
     undefined,
     AuthStatus
   > = async (req, res) => {
-    const { ownerid } = await this.repo.getContentId(Number(req.params.id));
+    try {
+      const { ownerid } = await this.repo.getContentId(Number(req.params.id));
 
-    if (ownerid !== res.locals.user.id)
-      return res.status(401).json({ message: "Unautorized ID!!" }).end();
+      if (ownerid !== res.locals.user.id)
+        return res.status(401).json({ message: "Unautorized ID!!" }).end();
 
-    const deletedContent = await this.repo.deleteContent(Number(req.params.id));
-    return res.status(200).json(deletedContent).end();
+      const deletedContent = await this.repo.deleteContent(
+        Number(req.params.id)
+      );
+      return res.status(200).json(deletedContent).end();
+    } catch (err) {
+      return res.status(500).json({ message: "Internal server error" }).end();
+    }
   };
 }

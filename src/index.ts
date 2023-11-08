@@ -7,6 +7,7 @@ import UserHandler from "./handlers/user";
 import JWTMiddleware from "./middleware/jwt";
 import ContentRepository from "./repositories/content";
 import ContentHandler from "./handlers/content";
+import cors from "cors";
 
 //const PORT = Number(process.env.PORT || 8080)
 const app = express();
@@ -17,6 +18,7 @@ const contentRepo: IContentRepository = new ContentRepository(client);
 const contentHandler: IContentHandler = new ContentHandler(contentRepo);
 const jwtMiddleware = new JWTMiddleware();
 app.use(express.json());
+app.use(cors());
 app.get("/", jwtMiddleware.auth, (req, res) => {
   console.log(res.locals);
   return res.status(200).send("Welcome to Learnhub").end();
